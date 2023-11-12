@@ -11,11 +11,16 @@ const pool = new Pool({
 
 const obtenerLibros = async () => {
   try {
-    const result = await pool.query("SELECT * FROM productos");
-    console.log("Libros encontrados:", result.rows);
-    return result.rows;
+    const { rows } = await pool.query("SELECT * FROM productos");
+    return rows;
   } catch (error) {
     console.error("Error en la query:", error);
     throw new Error("Error en obtener Libros");
   }
+};
+
+
+
+module.exports = {
+  obtenerLibros,
 };

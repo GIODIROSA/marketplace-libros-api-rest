@@ -12,6 +12,8 @@ const pool = new Pool({
   allowExitOnIdle: true,
 });
 
+//consultas_
+const { obtenerLibros } = require("./consulta");
 
 //PORT
 const PORT = 3001;
@@ -20,13 +22,7 @@ const PORT = 3001;
 app.use(express.json());
 app.use(cors());
 
-// const getDate = async()=> {
-//     const result = await pool.query("SELECT NOW()")
-//     console.log(result)
-// }
-
-// getDate();
-
+//method
 app.get("/libros", async (req, res) => {
   const libros = await obtenerLibros();
   res.json(libros);
@@ -36,3 +32,12 @@ app.get("/libros", async (req, res) => {
 app.listen(PORT, () => {
   console.log(`SERVIDOR ENCENDIDO EN EL PORT: ${PORT}`);
 });
+
+
+
+// const getDate = async()=> {
+//     const result = await pool.query("SELECT NOW()")
+//     console.log(result)
+// }
+
+// getDate();
