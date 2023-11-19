@@ -1,3 +1,4 @@
+require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const app = express();
@@ -11,17 +12,20 @@ const {
 } = require("./consulta");
 
 //PORT
-const PORT = 3001;
+const port = process.env.PORT || 3002;
 
-//servicios
+//middleware
 app.use(express.json());
 app.use(cors());
 
 //method
-app.get("/libros", async (req, res) => {
+//check
+app.get("/productos", async (req, res) => {
   const libros = await obtenerLibros();
   res.json(libros);
 });
+
+
 
 app.post("/libros", async (req, res) => {
   try {
@@ -93,8 +97,8 @@ app.delete("/libros/:id", async (req, res) => {
 });
 
 //servidor
-app.listen(PORT, () => {
-  console.log(`SERVIDOR ENCENDIDO EN EL PORT: ${PORT}`);
+app.listen(port, () => {
+  console.log(`SERVIDOR ENCENDIDO EN EL PORT: ${port}`);
 });
 
 // const getDate = async()=> {
