@@ -103,10 +103,3 @@ app.get("*", (req, res) => {
 app.listen(port, () => {
   console.log(`SERVIDOR ENCENDIDO EN EL PORT: ${port}`);
 });
-
-// const getDate = async()=> {
-//     const result = await pool.query("SELECT NOW()")
-//     console.log(result)
-// }
-
-// getDate();
