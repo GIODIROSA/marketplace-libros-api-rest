@@ -1,13 +1,4 @@
-const express = require("express");
-const { Pool } = require("pg");
-
-const pool = new Pool({
-  host: "localhost",
-  user: "postgres",
-  password: "root",
-  database: "marketplace_libros",
-  allowExitOnIdle: true,
-});
+const { pool } = require("./server");
 
 const obtenerLibros = async () => {
   try {

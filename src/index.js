@@ -2,16 +2,6 @@ const express = require("express");
 const cors = require("cors");
 const app = express();
 
-const { Pool } = require("pg");
-
-const pool = new Pool({
-  host: "localhost",
-  user: "postgres",
-  password: "root",
-  database: "marketplace_libros",
-  allowExitOnIdle: true,
-});
-
 //consultas_
 const {
   obtenerLibros,
