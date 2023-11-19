@@ -3,6 +3,60 @@ const bcrypt = require("bcryptjs");
 
 //CONSULTA BASADAS EN USUARIOS
 
+const getUsuario = async (email, res) => {
+  try {
+    let consulta =
+      "SELECT email, nombre, apellido FROM usuarios WHERE email = $1";
+    let values = [email];
+    const { rows } = await pool.query(consulta, values);
+
+    // console.log("get de usuario:", rows);
+
+    let dataUsuario;
+
+    rows.forEach((usuario) => {
+      dataUsuario = {
+        email: usuario.email,
+        nombre: usuario.nombre,
+        apellido: usuario.apellido,
+      };
+    });
+
+    console.log("salida:", dataUsuario);
+    return dataUsuario.nombre;
+
+    // if (rows.length > 0) {
+    //   return rows[0].email;
+    //   const { email, rol, usuario } = row[0];
+    //   return { email: email.email, rol: email.rol, usuario: email.usuario };
+    // } else {
+    //   return null;
+    // }
+  } catch (error) {
+    console.error("ERROR en la query: ", error);
+    throw error;
+  }
+};
+
+const verificarCredenciales = async (email, password) => {
+  const values = [email];
+  const consulta = "SELECT * FROM usuarios WHERE email = $1";
+
+  const { rows, rowCount } = await pool.query(consulta, values);
+
+  if (rowCount === 1) {
+    const usuario = rows[0];
+    const passwordEncriptado = usuario.password;
+    const passwordEsCorrecta = bcrypt.compareSync(password, passwordEncriptado);
+    if (!passwordEsCorrecta) {
+      throw {
+        code: 404,
+        message: "No se encontró ningún usuario con estas credenciales",
+      };
+    }
+  }
+};
+
 const registroUsuario = async (usuario) => {
   try {
     let { nombre, apellido, direccion, email, password } = usuario;
@@ -141,4 +195,6 @@ module.exports = {
   modificarPrecioLibro,
   eliminarLibro,
   registroUsuario,
+  verificarCredenciales,
+  getUsuario,
 };
