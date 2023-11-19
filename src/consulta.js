@@ -1,9 +1,37 @@
 const { pool } = require("./server");
+const bcrypt = require("bcryptjs");
 
-const obtenerLibros = async ({
-  limits = 10,
-  order_by = "producto_id_ASC",
-}) => {
+//CONSULTA BASADAS EN USUARIOS
+
+const registroUsuario = async (usuario) => {
+  try {
+    let { nombre, apellido, direccion, email, password, rol } = usuario;
+
+    const passwordEncriptado = bcrypt.hashSync(password);
+    password = passwordEncriptado;
+
+    const values = [
+      nombre,
+      apellido,
+      direccion,
+      email,
+      passwordEncriptado,
+      rol,
+    ];
+
+    const consulta =
+      "INSERT INTO usuarios (nombre, apellido, dirreccion, email, password, rol) VALUES ($1, $2, $3, $4, $5, $6)";
+
+    const { rowCount } = await pool.query(consulta, values);
+    return rowCount;
+  } catch (error) {
+    console.error("ERROR en la query: ", error);
+    res.status(500).json({ error: "Error al actualizar el evento" });
+  }
+};
+
+// CONSULTA BASADAS EN LIBROS - PRODUCTOS
+const obtenerLibros = async ({ limits = 10, order_by = "producto_id_ASC" }) => {
   let nombreQuery;
   let direccion;
 
@@ -28,7 +56,6 @@ const obtenerLibros = async ({
 
     console.log("> nombre:", nombreQuery);
     console.log("> orden:", direccion);
-    
 
     const formattedQuery = {
       text: `SELECT * FROM productos ORDER BY ${nombreQuery} ${direccion} LIMIT $1`,

@@ -1,6 +1,7 @@
 require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
+const jwt = require("jsonwebtoken");
 const app = express();
 
 //consultas_
@@ -17,6 +18,17 @@ const port = process.env.PORT || 3002;
 //middleware
 app.use(express.json());
 app.use(cors());
+
+//usuarios
+app.post("/usuarios", async (req, res) => {
+  try {
+    const usuario = req.body;
+    await registroUsuario(usuario);
+    res.send("Usuario creado con éxito");
+  } catch (error) {
+    res.status(500).send(error);
+  }
+});
 
 //method
 //check
