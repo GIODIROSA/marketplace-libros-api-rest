@@ -1,9 +1,42 @@
 const { pool } = require("./server");
 
-const obtenerLibros = async () => {
+const obtenerLibros = async ({
+  limits = 10,
+  order_by = "producto_nombre_ASC",
+}) => {
+  let nombreQuery;
+  let direccion;
+
   try {
-    const { rows } = await pool.query("SELECT * FROM productos");
-    return rows;
+    const consulta = order_by.replace(/_([^_]*)$/, "$1");
+    console.log("===>", consulta);
+
+    if (consulta === "producto_nombreASC") {
+      const matches = consulta.match(/^(.*?)(ASC)?$/);
+
+      const nombreCompleto = matches[1];
+      nombreQuery = nombreCompleto.replace(/ASC$/, "");
+
+      direccion = matches[2] ? "ASC" : "DESC";
+    } else {
+      const matches = consulta.match(/^(.*?)(DESC)?$/);
+
+      const nombreCompleto = matches[1];
+      nombreQuery = nombreCompleto.replace(/DESC$/, "");
+
+      direccion = matches[2] ? "DESC" : "ASC";
+    }
+
+    console.log("> nombre:", nombreQuery);
+    console.log("> orden:", direccion);
+
+    const formattedQuery = {
+      text: `SELECT * FROM productos ORDER BY ${nombreQuery} ${direccion} LIMIT $1`,
+      values: [limits],
+    };
+
+    const { rows: productos } = await pool.query(formattedQuery);
+    return productos;
   } catch (error) {
     console.error("Error en la query:", error);
     throw new Error("Error en obtener Libros");

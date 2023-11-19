@@ -21,11 +21,10 @@ app.use(cors());
 //method
 //check
 app.get("/productos", async (req, res) => {
-  const libros = await obtenerLibros();
+  const queryStrings = req.query;
+  const libros = await obtenerLibros(queryStrings);
   res.json(libros);
 });
-
-
 
 app.post("/libros", async (req, res) => {
   try {
