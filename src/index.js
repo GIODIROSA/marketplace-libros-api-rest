@@ -10,6 +10,7 @@ const {
   agregarLibro,
   modificarPrecioLibro,
   eliminarLibro,
+  registroUsuario,
 } = require("./consulta");
 
 //PORT

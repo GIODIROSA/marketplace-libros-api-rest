@@ -5,7 +5,9 @@ const bcrypt = require("bcryptjs");
 
 const registroUsuario = async (usuario) => {
   try {
-    let { nombre, apellido, direccion, email, password, rol } = usuario;
+    let { nombre, apellido, direccion, email, password } = usuario;
+
+    let rol = "usuario";
 
     const passwordEncriptado = bcrypt.hashSync(password);
     password = passwordEncriptado;
@@ -20,7 +22,7 @@ const registroUsuario = async (usuario) => {
     ];
 
     const consulta =
-      "INSERT INTO usuarios (nombre, apellido, dirreccion, email, password, rol) VALUES ($1, $2, $3, $4, $5, $6)";
+      "INSERT INTO usuarios (nombre, apellido, direccion, email, password, rol) VALUES ($1, $2, $3, $4, $5, $6)";
 
     const { rowCount } = await pool.query(consulta, values);
     return rowCount;
@@ -138,4 +140,5 @@ module.exports = {
   agregarLibro,
   modificarPrecioLibro,
   eliminarLibro,
+  registroUsuario,
 };
