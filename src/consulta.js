@@ -2,16 +2,15 @@ const { pool } = require("./server");
 
 const obtenerLibros = async ({
   limits = 10,
-  order_by = "producto_nombre_ASC",
+  order_by = "producto_id_ASC",
 }) => {
   let nombreQuery;
   let direccion;
 
   try {
     const consulta = order_by.replace(/_([^_]*)$/, "$1");
-    console.log("===>", consulta);
 
-    if (consulta === "producto_nombreASC") {
+    if (consulta === "producto_idASC") {
       const matches = consulta.match(/^(.*?)(ASC)?$/);
 
       const nombreCompleto = matches[1];
@@ -29,6 +28,7 @@ const obtenerLibros = async ({
 
     console.log("> nombre:", nombreQuery);
     console.log("> orden:", direccion);
+    
 
     const formattedQuery = {
       text: `SELECT * FROM productos ORDER BY ${nombreQuery} ${direccion} LIMIT $1`,
