@@ -23,7 +23,7 @@ const getUsuario = async (email, res) => {
     });
 
     console.log("salida:", dataUsuario);
-    return dataUsuario.nombre;
+    return dataUsuario;
 
     // if (rows.length > 0) {
     //   return rows[0].email;
