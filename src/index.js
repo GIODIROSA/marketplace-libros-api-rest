@@ -95,6 +95,10 @@ app.delete("/libros/:id", async (req, res) => {
   }
 });
 
+app.get("*", (req, res) => {
+  res.status(404).send("Esta ruta no existe");
+});
+
 //servidor
 app.listen(port, () => {
   console.log(`SERVIDOR ENCENDIDO EN EL PORT: ${port}`);
