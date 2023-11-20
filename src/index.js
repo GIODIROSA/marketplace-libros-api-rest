@@ -12,7 +12,7 @@ const {
   eliminarLibro,
   registroUsuario,
   verificarCredenciales,
-  getUsuario
+  getUsuario,
 } = require("./consulta");
 
 //PORT
