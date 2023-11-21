@@ -5,7 +5,7 @@ const bcrypt = require("bcryptjs");
 
 const getUsuario = async (email) => {
   try {
-    let consulta = "SELECT nombre, apellido FROM usuarios WHERE email = $1";
+    let consulta = "SELECT * FROM usuarios WHERE email = $1";
     let values = [email];
     const { rows } = await pool.query(consulta, values);
 
