@@ -3,35 +3,13 @@ const bcrypt = require("bcryptjs");
 
 //CONSULTA BASADAS EN USUARIOS
 
-const getUsuario = async (email, res) => {
+const getUsuario = async (email) => {
   try {
-    let consulta =
-      "SELECT email, nombre, apellido FROM usuarios WHERE email = $1";
+    let consulta = "SELECT nombre, apellido FROM usuarios WHERE email = $1";
     let values = [email];
     const { rows } = await pool.query(consulta, values);
 
-    // console.log("get de usuario:", rows);
-
-    let dataUsuario;
-
-    rows.forEach((usuario) => {
-      dataUsuario = {
-        email: usuario.email,
-        nombre: usuario.nombre,
-        apellido: usuario.apellido,
-      };
-    });
-
-    console.log("salida:", dataUsuario);
-    return dataUsuario;
-
-    // if (rows.length > 0) {
-    //   return rows[0].email;
-    //   const { email, rol, usuario } = row[0];
-    //   return { email: email.email, rol: email.rol, usuario: email.usuario };
-    // } else {
-    //   return null;
-    // }
+    return rows;
   } catch (error) {
     console.error("ERROR en la query: ", error);
     throw error;

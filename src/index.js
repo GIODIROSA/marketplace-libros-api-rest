@@ -28,14 +28,17 @@ app.get("/usuarios", async (req, res) => {
   try {
     const token = req.headers.authorization;
 
+    console.log("token=>", token);
+
     const readToken = token.split("Bearer ")[1];
     console.log("ESTE ES EL TOKEN:", readToken);
 
     jwt.verify(readToken, "az_AZ");
     const { email } = jwt.decode(readToken);
-    const emailEncontrado = await getUsuario(email, res);
+    const emailEncontrado = await getUsuario(email);
 
     if (emailEncontrado) {
+      res.send(emailEncontrado[0]);
       res.status(200).json({ email: emailEncontrado });
     } else {
       res.status(404).json({ message: "Email no encontrado" });
