@@ -14,6 +14,7 @@ const {
   verificarCredenciales,
   getUsuario,
 } = require("./consulta");
+const multer = require("multer");
 
 //PORT
 const port = process.env.PORT || 3002;
@@ -21,6 +22,32 @@ const port = process.env.PORT || 3002;
 //middleware
 app.use(express.json());
 app.use(cors());
+app.use("/uploads", express.static("uploads"));
+
+//storage
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, "uploads/");
+  },
+  filename: function (req, file, cb) {
+    const filename = file.originalname;
+    cb(null, filename);
+  },
+});
+
+const uploadMiddleware = multer({ storage: storage }).single("myFile");
+
+app.post("/subirImagen", (req, res) => {
+  uploadMiddleware(req, res, function (err) {
+    if (err instanceof multer.MulterError) {
+      return res.status(500).json({ error: err.message });
+    } else if (err) {
+      return res.status(500).json({ error: err.message });
+    }
+
+    return res.status(200).json({ mensaje: "Imagen subida exitosamente" });
+  });
+});
 
 //usuarios
 
