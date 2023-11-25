@@ -4,7 +4,6 @@ const cors = require("cors");
 const jwt = require("jsonwebtoken");
 const app = express();
 const bodyParser = require("body-parser");
-const { pool } = require("./server");
 
 //consultas_
 const {
