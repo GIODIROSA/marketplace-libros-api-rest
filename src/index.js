@@ -3,6 +3,8 @@ const express = require("express");
 const cors = require("cors");
 const jwt = require("jsonwebtoken");
 const app = express();
+const bodyParser = require("body-parser");
+const { pool } = require("./server");
 
 //consultas_
 const {
@@ -13,16 +15,20 @@ const {
   registroUsuario,
   verificarCredenciales,
   getUsuario,
+  crearLibroData,
 } = require("./consulta");
 const multer = require("multer");
+const { Console } = require("console");
 
 //PORT
 const port = process.env.PORT || 3002;
 
 //middleware
-app.use(express.json());
+app.use(express.json({ limit: "50mb" }));
 app.use(cors());
 app.use("/uploads", express.static("uploads"));
+app.use(bodyParser.json({ limit: "50mb" }));
+app.use(bodyParser.urlencoded({ extended: true, limit: "50mb" }));
 
 //storage
 const storage = multer.diskStorage({
@@ -35,19 +41,38 @@ const storage = multer.diskStorage({
   },
 });
 
-const uploadMiddleware = multer({ storage: storage }).single("myFile");
+const uploadMiddleware = multer({ storage: storage });
 
-app.post("/subirImagen", (req, res) => {
-  uploadMiddleware(req, res, function (err) {
-    if (err instanceof multer.MulterError) {
-      return res.status(500).json({ error: err.message });
-    } else if (err) {
-      return res.status(500).json({ error: err.message });
+app.post(
+  "/subirImagen",
+  uploadMiddleware.single("myFile"),
+  async (req, res) => {
+    try {
+      const jsonDataString = req.body.data;
+
+      const jsonData = JSON.parse(jsonDataString);
+
+      const originalFileName = req.file.originalname;
+
+      const producto_imagen = `uploads/${originalFileName}`;
+
+      await crearLibroData(jsonData, producto_imagen);
+
+      res.status(200).json({
+        success: true,
+        message: "Libro agregado con éxito",
+      });
+    } catch (error) {
+      console.error("Error al agregar libro:", error);
+
+      res.status(500).json({
+        success: false,
+        error:
+          error instanceof Error ? error.message : "Error interno del servidor",
+      });
     }
-
-    return res.status(200).json({ mensaje: "Imagen subida exitosamente" });
-  });
-});
+  }
+);
 
 //usuarios
 

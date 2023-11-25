@@ -167,6 +167,52 @@ const eliminarLibro = async (id) => {
   return result.rows[0];
 };
 
+const crearLibroData = async (jsonData, producto_imagen) => {
+  try {
+    const {
+      producto_nombre,
+      producto_descripcion,
+      producto_precio,
+      producto_categoria,
+      producto_autores,
+      producto_stock,
+      producto_estado,
+    } = jsonData;
+
+    const insertProductoQuery = `
+      INSERT INTO productos (
+        producto_nombre,
+        producto_imagen,
+        producto_descripcion,
+        producto_precio,
+        producto_categoria,
+        producto_autores,
+        producto_stock,
+        producto_estado
+      ) VALUES (
+        $1, $2, $3, $4, $5, $6, $7, $8
+      ) RETURNING *;
+    `;
+
+    const values = [
+      producto_nombre,
+      producto_imagen,
+      producto_descripcion,
+      producto_precio,
+      producto_categoria,
+      producto_autores,
+      producto_stock,
+      producto_estado,
+    ];
+
+    const result = await pool.query(insertProductoQuery, values);
+
+    return result.rows[0];
+  } catch (error) {
+    throw error;
+  }
+};
+
 module.exports = {
   obtenerLibros,
   agregarLibro,
@@ -175,4 +221,5 @@ module.exports = {
   registroUsuario,
   verificarCredenciales,
   getUsuario,
+  crearLibroData,
 };
