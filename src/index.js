@@ -43,7 +43,7 @@ const storage = multer.diskStorage({
 const uploadMiddleware = multer({ storage: storage });
 
 app.post(
-  "/subirImagen",
+  "/admin",
   uploadMiddleware.single("myFile"),
   async (req, res) => {
     try {
