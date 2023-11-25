@@ -53,7 +53,7 @@ app.post(
 
       const originalFileName = req.file.originalname;
 
-      const producto_imagen = `uploads/${originalFileName}`;
+      const producto_imagen = `uploads\\${originalFileName}`;
 
       await crearLibroData(jsonData, producto_imagen);
 
