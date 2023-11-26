@@ -73,6 +73,26 @@ app.post(
   }
 );
 
+app.delete("/admin/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const result = await eliminarLibro(id);
+
+    if (result.rowCount === 0) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Libro no encontrado" });
+    }
+
+    res
+      .status(200)
+      .json({ success: true, message: "Libro eliminado con éxito" });
+  } catch (error) {
+    console.error("Error al eliminar libro:", error);
+    res.status(500).json({ error: "Error interno del servidor" });
+  }
+});
+
 //usuarios
 
 app.get("/usuarios", async (req, res) => {
@@ -132,32 +152,7 @@ app.get("/productos", async (req, res) => {
   res.json(libros);
 });
 
-app.post("/libros", async (req, res) => {
-  try {
-    const body = req.body;
 
-    await agregarLibro(body);
-
-    res.status(201).json({
-      success: true,
-      message: "Libro agregado con éxito",
-    });
-  } catch (error) {
-    console.error("Error al agregar libro:", error);
-
-    if (error instanceof Error) {
-      res.status(500).json({
-        success: false,
-        error: error.message,
-      });
-    } else {
-      res.status(500).json({
-        success: false,
-        error: "Error interno del servidor",
-      });
-    }
-  }
-});
 
 app.put("/libros/:id", async (req, res) => {
   try {
@@ -181,25 +176,7 @@ app.put("/libros/:id", async (req, res) => {
   }
 });
 
-app.delete("/libros/:id", async (req, res) => {
-  try {
-    const { id } = req.params;
-    const result = await eliminarLibro(id);
 
-    if (result.rowCount === 0) {
-      return res
-        .status(404)
-        .json({ success: false, message: "Libro no encontrado" });
-    }
-
-    res
-      .status(200)
-      .json({ success: true, message: "Libro eliminado con éxito" });
-  } catch (error) {
-    console.error("Error al eliminar libro:", error);
-    res.status(500).json({ error: "Error interno del servidor" });
-  }
-});
 
 app.get("*", (req, res) => {
   res.status(404).send("Esta ruta no existe");
