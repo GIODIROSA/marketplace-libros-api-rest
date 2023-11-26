@@ -104,39 +104,6 @@ const obtenerLibros = async ({ limits = 10, order_by = "producto_id_ASC" }) => {
   }
 };
 
-const agregarLibro = async (body) => {
-  const {
-    producto_nombre,
-    producto_imagen,
-    producto_descripcion,
-    producto_precio_unitario,
-    producto_autores,
-    producto_stock,
-    categoria_id,
-  } = body;
-
-  try {
-    const consulta =
-      "INSERT INTO productos (producto_nombre, producto_imagen, producto_descripcion, producto_precio_unitario, producto_autores, producto_stock, categoria_id) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *";
-
-    const values = [
-      producto_nombre,
-      producto_imagen,
-      producto_descripcion,
-      producto_precio_unitario,
-      producto_autores,
-      producto_stock,
-      categoria_id,
-    ];
-
-    const result = await pool.query(consulta, values);
-    console.log("Libro agregado:", result.rows[0]);
-  } catch (error) {
-    console.error("Error en la query:", error);
-    throw new Error("Error al agregar el libro");
-  }
-};
-
 const modificarPrecioLibro = async (producto_precio, producto_nombre, id) => {
   try {
     const consulta =
@@ -215,7 +182,6 @@ const crearLibroData = async (jsonData, producto_imagen) => {
 
 module.exports = {
   obtenerLibros,
-  agregarLibro,
   modificarPrecioLibro,
   eliminarLibro,
   registroUsuario,

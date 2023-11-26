@@ -8,7 +8,6 @@ const bodyParser = require("body-parser");
 //consultas_
 const {
   obtenerLibros,
-  agregarLibro,
   modificarPrecioLibro,
   eliminarLibro,
   registroUsuario,
@@ -42,36 +41,32 @@ const storage = multer.diskStorage({
 
 const uploadMiddleware = multer({ storage: storage });
 
-app.post(
-  "/admin",
-  uploadMiddleware.single("myFile"),
-  async (req, res) => {
-    try {
-      const jsonDataString = req.body.data;
+app.post("/admin", uploadMiddleware.single("myFile"), async (req, res) => {
+  try {
+    const jsonDataString = req.body.data;
 
-      const jsonData = JSON.parse(jsonDataString);
+    const jsonData = JSON.parse(jsonDataString);
 
-      const originalFileName = req.file.originalname;
+    const originalFileName = req.file.originalname;
 
-      const producto_imagen = `uploads\\${originalFileName}`;
+    const producto_imagen = `uploads\\${originalFileName}`;
 
-      await crearLibroData(jsonData, producto_imagen);
+    await crearLibroData(jsonData, producto_imagen);
 
-      res.status(200).json({
-        success: true,
-        message: "Libro agregado con éxito",
-      });
-    } catch (error) {
-      console.error("Error al agregar libro:", error);
+    res.status(200).json({
+      success: true,
+      message: "Libro agregado con éxito",
+    });
+  } catch (error) {
+    console.error("Error al agregar libro:", error);
 
-      res.status(500).json({
-        success: false,
-        error:
-          error instanceof Error ? error.message : "Error interno del servidor",
-      });
-    }
+    res.status(500).json({
+      success: false,
+      error:
+        error instanceof Error ? error.message : "Error interno del servidor",
+    });
   }
-);
+});
 
 app.delete("/admin/:id", async (req, res) => {
   try {
@@ -166,19 +161,31 @@ app.post("/login", async (req, res) => {
   }
 });
 
-//method
-//check
 app.get("/productos", async (req, res) => {
   const queryStrings = req.query;
   const libros = await obtenerLibros(queryStrings);
   res.json(libros);
 });
 
+//carrito  compras
+
+app.post("/crearPedido", async (req, res) => {
+  const carritoData = req.body;
+  console.log("data=>", carritoData);
 
 
+  const total = carritoData.detalle_pedido.reduce(
+    (accumulatedTotal, detalle) => accumulatedTotal + detalle.detalle_cantidad * detalle.detalle_precio,
+    0
+  );
+ 
+  const detalle_total = total;
 
+  
+  //console.log("detalleTotal=>", detalle_total);
 
-
+  res.send("Pedido realizado");
+});
 
 app.get("*", (req, res) => {
   res.status(404).send("Esta ruta no existe");
