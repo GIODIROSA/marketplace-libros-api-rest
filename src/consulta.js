@@ -137,11 +137,11 @@ const agregarLibro = async (body) => {
   }
 };
 
-const modificarPrecioLibro = async (precio, id) => {
+const modificarPrecioLibro = async (producto_precio, producto_nombre, id) => {
   try {
     const consulta =
-      "UPDATE productos SET producto_precio_unitario = $1 WHERE producto_id = $2";
-    const values = [precio, id];
+      "UPDATE productos SET producto_precio = $1, producto_nombre = $2 WHERE producto_id = $3";
+    const values = [producto_precio, producto_nombre, id];
     const result = await pool.query(consulta, values);
 
     if (result.rowCount === 0) {

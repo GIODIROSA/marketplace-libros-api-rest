@@ -93,6 +93,28 @@ app.delete("/admin/:id", async (req, res) => {
   }
 });
 
+app.put("/admin/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { producto_nombre, producto_precio } = req.query;
+
+    if (!producto_precio || isNaN(Number(producto_precio))) {
+      return res
+        .status(400)
+        .json({ error: "El parámetro 'precio' es inválido" });
+    }
+
+    await modificarPrecioLibro(Number(producto_precio), producto_nombre, id);
+
+    res
+      .status(200)
+      .json({ success: true, message: "Precio modificado con éxito" });
+  } catch (error) {
+    console.error("Error al modificar el precio del libro:", error);
+    res.status(500).json({ error: "Error interno del servidor" });
+  }
+});
+
 //usuarios
 
 app.get("/usuarios", async (req, res) => {
@@ -154,27 +176,7 @@ app.get("/productos", async (req, res) => {
 
 
 
-app.put("/libros/:id", async (req, res) => {
-  try {
-    const { id } = req.params;
-    const { precio } = req.query;
 
-    if (!precio || isNaN(Number(precio))) {
-      return res
-        .status(400)
-        .json({ error: "El parámetro 'precio' es inválido" });
-    }
-
-    await modificarPrecioLibro(Number(precio), id);
-
-    res
-      .status(200)
-      .json({ success: true, message: "Precio modificado con éxito" });
-  } catch (error) {
-    console.error("Error al modificar el precio del libro:", error);
-    res.status(500).json({ error: "Error interno del servidor" });
-  }
-});
 
 
 
