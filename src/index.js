@@ -90,7 +90,7 @@ app.get("/usuarios", async (req, res) => {
 
     if (emailEncontrado) {
       res.send(emailEncontrado[0]);
-      res.status(200).json({ email: emailEncontrado });
+      // res.status(200).json({ email: emailEncontrado });
     } else {
       res.status(404).json({ message: "Email no encontrado" });
     }
