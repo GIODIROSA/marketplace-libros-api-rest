@@ -15,6 +15,9 @@ const {
   getUsuario,
   crearLibroData,
 } = require("./consulta");
+
+const { agregarPedidoDetalle } = require("./carritoCompras");
+
 const multer = require("multer");
 const { Console } = require("console");
 
@@ -180,37 +183,30 @@ app.get("/productos", async (req, res) => {
 //carrito  compras
 
 app.post("/crearPedido", async (req, res) => {
-  const carritoData = req.body;
-  console.log("data=>", carritoData);
+  try {
+    const carritoData = req.body;
+    console.log("data=>", carritoData);
 
-  const total = carritoData.detalle_pedido.reduce(
-    (accumulatedTotal, detalle) =>
-      accumulatedTotal + detalle.detalle_cantidad * detalle.detalle_precio,
-    0
-  );
+    const calcularDetalleTotal = (detalle_pedido) => {
+      return detalle_pedido.reduce(
+        (accumulatedTotal, detalle) =>
+          accumulatedTotal + detalle.detalle_cantidad * detalle.detalle_precio,
+        0
+      );
+    };
 
-  const detalle_total = total;
+    const detalle_total = calcularDetalleTotal(carritoData.detalle_pedido);
 
-  // const pedido = await agregarPedido();
+    console.log(">>>>>", detalle_total);
 
-  // const detalle = await detallePedido();
+    const pedido = await agregarPedidoDetalle(carritoData, detalle_total);
 
-  //console.log("detalleTotal=>", detalle_total);
-
-  res.send("Pedido realizado");
+    res.json(pedido);
+  } catch (error) {
+    console.error("Error al crear el pedido:", error);
+    res.status(500).json({ error: "Error interno del servidor" });
+  }
 });
-
-// app.use((err, req, res, next) => {
-//   console.error(err);
-
-//   if (err.code) {
-//     res.status(err.code).json({ error: err.message });
-//   } else {
-//     res.status(500).json({ error: "Error interno del servidor" });
-//     next(err);
-//   }
-
-// });
 
 app.get("*", (req, res) => {
   res.status(404).send("Esta ruta no existe");
