@@ -27,15 +27,6 @@ app.use(cors());
 app.use("/uploads", express.static("uploads"));
 app.use(bodyParser.json({ limit: "50mb" }));
 app.use(bodyParser.urlencoded({ extended: true, limit: "50mb" }));
-app.use((err, req, res, next) => {
-  console.error(err);
-
-  if (err.code) {
-    res.status(err.code).json({ error: err.message });
-  } else {
-    res.status(500).json({ error: "Error interno del servidor" });
-  }
-});
 
 //storage
 const storage = multer.diskStorage({
@@ -161,13 +152,22 @@ app.post("/login", async (req, res) => {
     const { email, password } = req.body;
     console.log("->", email, password);
     await verificarCredenciales(email, password);
+
+    if (!email) {
+      return res.status(401).json({ error: "Credenciales incorrectas" });
+    }
+
     const token = jwt.sign({ email }, "az_AZ");
     // res.json({ success: true, email, token });
     return res.send(token);
-  } catch (error) {
-    console.log(error);
-    next(error);
-    // res.status(error || 500).send(error);
+  } catch (err) {
+    console.log(err);
+
+    if (err && err.code) {
+      return res.status(err).json({ error: err.message });
+    }
+
+    res.status(err || 500).send(err);
   }
 });
 
@@ -199,6 +199,18 @@ app.post("/crearPedido", async (req, res) => {
 
   res.send("Pedido realizado");
 });
+
+// app.use((err, req, res, next) => {
+//   console.error(err);
+
+//   if (err.code) {
+//     res.status(err.code).json({ error: err.message });
+//   } else {
+//     res.status(500).json({ error: "Error interno del servidor" });
+//     next(err);
+//   }
+
+// });
 
 app.get("*", (req, res) => {
   res.status(404).send("Esta ruta no existe");

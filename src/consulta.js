@@ -47,6 +47,7 @@ const verificarCredenciales = async (email, password) => {
       };
     }
 
+
     throw {
       code: 500,
       message: "Error al verificar las credenciales",
