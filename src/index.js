@@ -27,6 +27,15 @@ app.use(cors());
 app.use("/uploads", express.static("uploads"));
 app.use(bodyParser.json({ limit: "50mb" }));
 app.use(bodyParser.urlencoded({ extended: true, limit: "50mb" }));
+app.use((err, req, res, next) => {
+  console.error(err);
+
+  if (err.code) {
+    res.status(err.code).json({ error: err.message });
+  } else {
+    res.status(500).json({ error: "Error interno del servidor" });
+  }
+});
 
 //storage
 const storage = multer.diskStorage({
@@ -154,10 +163,11 @@ app.post("/login", async (req, res) => {
     await verificarCredenciales(email, password);
     const token = jwt.sign({ email }, "az_AZ");
     // res.json({ success: true, email, token });
-    res.send(token);
+    return res.send(token);
   } catch (error) {
     console.log(error);
-    res.status(error || 500).send(error);
+    next(error);
+    // res.status(error || 500).send(error);
   }
 });
 
@@ -173,15 +183,18 @@ app.post("/crearPedido", async (req, res) => {
   const carritoData = req.body;
   console.log("data=>", carritoData);
 
-
   const total = carritoData.detalle_pedido.reduce(
-    (accumulatedTotal, detalle) => accumulatedTotal + detalle.detalle_cantidad * detalle.detalle_precio,
+    (accumulatedTotal, detalle) =>
+      accumulatedTotal + detalle.detalle_cantidad * detalle.detalle_precio,
     0
   );
- 
+
   const detalle_total = total;
 
-  
+  // const pedido = await agregarPedido();
+
+  // const detalle = await detallePedido();
+
   //console.log("detalleTotal=>", detalle_total);
 
   res.send("Pedido realizado");
