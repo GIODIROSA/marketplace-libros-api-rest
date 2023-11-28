@@ -154,14 +154,18 @@ app.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
     console.log("->", email, password);
-    await verificarCredenciales(email, password);
 
-    if (!email) {
-      return res.status(401).json({ error: "Credenciales incorrectas" });
+    if (!email || !password) {
+      throw {
+        code: 401,
+        message: "Email o Password incorrecto",
+      };
     }
 
+    await verificarCredenciales(email, password);
+
     const token = jwt.sign({ email }, "az_AZ");
-    // res.json({ success: true, email, token });
+   
     return res.send(token);
   } catch (err) {
     console.log(err);
@@ -182,7 +186,7 @@ app.get("/productos", async (req, res) => {
 
 //carrito  compras
 
-app.post("/crearPedido", async (req, res) => {
+app.post("/crear_pedido", async (req, res) => {
   try {
     const carritoData = req.body;
     console.log("data=>", carritoData);
@@ -202,6 +206,7 @@ app.post("/crearPedido", async (req, res) => {
     const pedido = await agregarPedidoDetalle(carritoData, detalle_total);
 
     res.json(pedido);
+    
   } catch (error) {
     console.error("Error al crear el pedido:", error);
     res.status(500).json({ error: "Error interno del servidor" });
