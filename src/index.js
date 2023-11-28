@@ -165,7 +165,7 @@ app.post("/login", async (req, res) => {
     await verificarCredenciales(email, password);
 
     const token = jwt.sign({ email }, "az_AZ");
-   
+
     return res.send(token);
   } catch (err) {
     console.log(err);
@@ -199,11 +199,11 @@ app.post("/crear_pedido", async (req, res) => {
       );
     };
 
-    const detalle_total = calcularDetalleTotal(carritoData.detalle_pedido);
+    const total = calcularDetalleTotal(carritoData.detalle_pedido);
 
-    console.log(">>>>>", detalle_total);
+    console.log(">>>>>", total);
 
-    const pedido = await agregarPedidoDetalle(carritoData, detalle_total);
+    const pedido = await agregarPedidoDetalle(carritoData, total);
 
     res.json(pedido);
     
