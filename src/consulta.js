@@ -17,29 +17,33 @@ const getUsuario = async (email) => {
 };
 
 const verificarCredenciales = async (email, password) => {
-  //try {
-    console.log("verificar:", email, password);
 
-    const consulta = "SELECT * FROM usuarios WHERE email = $1";
-    const { rows, rowCount } = await pool.query(consulta, [email]);
+  console.log("verificar:", email, password);
 
-    if (rowCount === 0) {
-      throw {
-        code: 404,
-        message: "No se encontró ningún usuario con estas credenciales",
-      };
-    }
 
-    const usuario = rows[0];
-    const passwordEncriptado = usuario.password;
+  const consulta = "SELECT * FROM usuarios WHERE email = $1";
+  const { rows, rowCount } = await pool.query(consulta, [email]);
 
-    if (!bcrypt.compareSync(password, passwordEncriptado)) {
-      throw {
-        code: 401,
-        message: "Contraseña incorrecta",
-      };
-    }
-}
+
+  if (rowCount === 0) {
+    throw {
+      code: 404,
+      message: "No se encontró ningún usuario con estas credenciales",
+    };
+  }
+
+  const usuario = rows[0];
+  const passwordEncriptado = usuario.password;
+
+  if (!bcrypt.compareSync(password, passwordEncriptado)) {
+    throw {
+      code: 401,
+      message: "Contraseña incorrecta",
+    };
+  }
+};
+
+
 
 const registroUsuario = async (usuario) => {
   try {

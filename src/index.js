@@ -113,8 +113,7 @@ app.put("/admin/:id", async (req, res) => {
   }
 });
 
-
-// usuarios 
+// usuarios
 
 app.get("/usuarios", async (req, res) => {
   const token = req.headers.authorization;
@@ -169,7 +168,7 @@ app.post("/login", async (req, res) => {
     await verificarCredenciales(email, password);
 
     const token = jwt.sign({ email }, "az_AZ");
-    // res.json({ success: true, email, token });
+
     return res.send(token);
   } catch (err) {
     res.status(err.code).json({ error: err.message });
@@ -184,7 +183,7 @@ app.get("/productos", async (req, res) => {
 
 //carrito  compras
 
-app.post("/crearPedido", async (req, res) => {
+app.post("/crear_pedido", async (req, res) => {
   try {
     const carritoData = req.body;
     console.log("data=>", carritoData);
@@ -197,11 +196,11 @@ app.post("/crearPedido", async (req, res) => {
       );
     };
 
-    const detalle_total = calcularDetalleTotal(carritoData.detalle_pedido);
+    const total = calcularDetalleTotal(carritoData.detalle_pedido);
 
-    console.log(">>>>>", detalle_total);
+    console.log(">>>>>", total);
 
-    const pedido = await agregarPedidoDetalle(carritoData, detalle_total);
+    const pedido = await agregarPedidoDetalle(carritoData, total);
 
     res.json(pedido);
   } catch (error) {
