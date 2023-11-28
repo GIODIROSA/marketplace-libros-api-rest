@@ -17,7 +17,7 @@ const getUsuario = async (email) => {
 };
 
 const verificarCredenciales = async (email, password) => {
-  try {
+  //try {
     console.log("verificar:", email, password);
 
     const consulta = "SELECT * FROM usuarios WHERE email = $1";
@@ -39,22 +39,7 @@ const verificarCredenciales = async (email, password) => {
         message: "Contraseña incorrecta",
       };
     }
-  } catch (error) {
-    if (error.code === "23505") {
-      throw {
-        code: 409,
-        message: "Conflicto en la base de datos: correo electrónico duplicado",
-      };
-    }
-
-
-    throw {
-      code: 500,
-      message: "Error al verificar las credenciales",
-      originalError: error,
-    };
-  }
-};
+}
 
 const registroUsuario = async (usuario) => {
   try {

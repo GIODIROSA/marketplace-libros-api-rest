@@ -113,30 +113,34 @@ app.put("/admin/:id", async (req, res) => {
   }
 });
 
-//usuarios
+
+// usuarios 
 
 app.get("/usuarios", async (req, res) => {
+  const token = req.headers.authorization;
   try {
-    const token = req.headers.authorization;
-
-    console.log("token=>", token);
-
-    const readToken = token.split("Bearer ")[1];
-    console.log("ESTE ES EL TOKEN:", readToken);
-
-    jwt.verify(readToken, "az_AZ");
-    const { email } = jwt.decode(readToken);
-    const emailEncontrado = await getUsuario(email);
-
-    if (emailEncontrado) {
-      res.send(emailEncontrado[0]);
-      // res.status(200).json({ email: emailEncontrado });
+    if (!token || token === "Bearer null") {
+      console.log("Sin autorización o token vacío");
+      //  caso de ausencia de token
+      res.status(401).json({ error: "Sin autorización o token vacío" });
     } else {
-      res.status(404).json({ message: "Email no encontrado" });
+      console.log("token=>", token);
+
+      const readToken = token.split("Bearer ")[1];
+      console.log("ESTE ES EL TOKEN:", readToken);
+
+      jwt.verify(readToken, "az_AZ");
+      const { email } = jwt.decode(readToken);
+      const emailEncontrado = await getUsuario(email);
+      if (emailEncontrado) {
+        res.send(emailEncontrado[0]);
+      }
     }
   } catch (error) {
     console.error("ERROR en la ruta /usuarios: ", error);
-    res.status(error.code || 500).send(error);
+    res
+      .status(401)
+      .json({ error: "Token inválido o error en la verificación" });
   }
 });
 
@@ -154,23 +158,21 @@ app.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
     console.log("->", email, password);
-    await verificarCredenciales(email, password);
 
-    if (!email) {
-      return res.status(401).json({ error: "Credenciales incorrectas" });
+    if (!email || !password) {
+      throw {
+        code: 401,
+        message: "",
+      };
     }
+
+    await verificarCredenciales(email, password);
 
     const token = jwt.sign({ email }, "az_AZ");
     // res.json({ success: true, email, token });
     return res.send(token);
   } catch (err) {
-    console.log(err);
-
-    if (err && err.code) {
-      return res.status(err).json({ error: err.message });
-    }
-
-    res.status(err || 500).send(err);
+    res.status(err.code).json({ error: err.message });
   }
 });
 
