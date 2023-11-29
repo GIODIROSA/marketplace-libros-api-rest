@@ -33,7 +33,7 @@ const port = process.env.PORT || 3002;
 /**
  *
  * MIDDLEWARE
- * prueba
+ * 
  */
 
 app.use(express.json({ limit: "50mb" }));
@@ -196,17 +196,21 @@ app.post("/login", async (req, res) => {
   }
 });
 
+
+
 app.get("/productos", async (req, res) => {
   const queryStrings = req.query;
   const libros = await obtenerLibros(queryStrings);
   res.json(libros);
 });
 
+
 /**
  *
  * CARRITO DE COMPRAS
  *
  */
+
 
 app.post("/crear_pedido", async (req, res) => {
   try {
