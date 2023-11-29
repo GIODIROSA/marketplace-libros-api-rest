@@ -4,6 +4,7 @@ const cors = require("cors");
 const jwt = require("jsonwebtoken");
 const app = express();
 const bodyParser = require("body-parser");
+const logger = require("morgan");
 
 //consultas_
 const {
@@ -21,17 +22,33 @@ const { agregarPedidoDetalle } = require("./carritoCompras");
 const multer = require("multer");
 const { Console } = require("console");
 
-//PORT
+/**
+ *
+ * PORT
+ *
+ */
+
 const port = process.env.PORT || 3002;
 
-//middleware
+/**
+ *
+ * MIDDLEWARE
+ *
+ */
+
 app.use(express.json({ limit: "50mb" }));
 app.use(cors());
 app.use("/uploads", express.static("uploads"));
 app.use(bodyParser.json({ limit: "50mb" }));
 app.use(bodyParser.urlencoded({ extended: true, limit: "50mb" }));
+app.use(logger("dev"));
 
-//storage
+/**
+ *
+ * STORAGE
+ *
+ */
+
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, "uploads/");
@@ -113,7 +130,11 @@ app.put("/admin/:id", async (req, res) => {
   }
 });
 
-// usuarios
+/**
+ * 
+ * USUARIOS
+ *
+ */
 
 app.get("/usuarios", async (req, res) => {
   const token = req.headers.authorization;
@@ -181,7 +202,11 @@ app.get("/productos", async (req, res) => {
   res.json(libros);
 });
 
-//carrito  compras
+/**
+ *
+ * CARRITO DE COMPRAS
+ *
+ */
 
 app.post("/crear_pedido", async (req, res) => {
   try {
@@ -213,7 +238,12 @@ app.get("*", (req, res) => {
   res.status(404).send("Esta ruta no existe");
 });
 
-//servidor
+/**
+ *
+ * SERVIDOR
+ *
+ */
+
 app.listen(port, () => {
   console.log(`SERVIDOR ENCENDIDO EN EL PORT: ${port}`);
 });

@@ -6,9 +6,7 @@ const bcrypt = require("bcryptjs");
  * 
  * CONSULTA BASADAS EN USUARIOS
  * 
- * 
  */
-
 
 const getUsuario = async (email) => {
   try {
@@ -81,7 +79,10 @@ const registroUsuario = async (usuario) => {
   }
 };
 
-// CONSULTA BASADAS EN LIBROS - PRODUCTOS
+/**
+ *  CONSULTA BASADAS EN LIBROS - PRODUCTOS
+ * 
+ */
 const obtenerLibros = async ({ limits = 10, order_by = "producto_id_ASC" }) => {
   let nombreQuery;
   let direccion;
