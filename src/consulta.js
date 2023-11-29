@@ -1,7 +1,14 @@
 const { pool } = require("./server");
 const bcrypt = require("bcryptjs");
 
-//CONSULTA BASADAS EN USUARIOS
+
+/**
+ * 
+ * CONSULTA BASADAS EN USUARIOS
+ * 
+ * 
+ */
+
 
 const getUsuario = async (email) => {
   try {
