@@ -63,11 +63,13 @@ const storage = multer.diskStorage({
 
 const uploadMiddleware = multer({ storage: storage });
 
-app.post("/admin", uploadMiddleware.single("myFile"), async (req, res) => {
+app.post("/admin", uploadMiddleware.single("imagenProducto"), async (req, res) => {
   try {
     const jsonDataString = req.body.data;
 
     const jsonData = JSON.parse(jsonDataString);
+
+    console.log("JSON", jsonData);
 
     const originalFileName = req.file.originalname;
 
@@ -90,6 +92,43 @@ app.post("/admin", uploadMiddleware.single("myFile"), async (req, res) => {
   }
 });
 
+/**
+ * @openapi
+ * /admin/{id}:
+ *   delete:
+ *     tags:
+ *       - Delete libro
+ *     summary: "Eliminar un libro"
+ *     description: "Elimina un libro según su ID."
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       '200':
+ *         description: "Libro eliminado con éxito"
+ *         content:
+ *           application/json:
+ *             example:
+ *               success: true
+ *               message: "Libro eliminado con éxito"
+ *       '404':
+ *         description: "Libro no encontrado"
+ *         content:
+ *           application/json:
+ *             example:
+ *               success: false
+ *               message: "Libro no encontrado"
+ *       '500':
+ *         description: "Error interno del servidor"
+ *         content:
+ *           application/json:
+ *             example:
+ *               error: "Error interno del servidor"
+ */
+
 app.delete("/admin/:id", async (req, res) => {
   try {
     const { id } = req.params;
@@ -109,7 +148,6 @@ app.delete("/admin/:id", async (req, res) => {
     res.status(500).json({ error: "Error interno del servidor" });
   }
 });
-
 
 /**
  * @openapi
@@ -154,8 +192,6 @@ app.delete("/admin/:id", async (req, res) => {
  *             example:
  *               error: "Error interno del servidor"
  */
-
-
 
 app.put("/admin/:id", async (req, res) => {
   try {
@@ -212,9 +248,6 @@ app.put("/admin/:id", async (req, res) => {
  *             example:
  *               error: "Sin autorización o token vacío"
  */
-
-
-
 
 app.get("/usuarios", async (req, res) => {
   const token = req.headers.authorization;
