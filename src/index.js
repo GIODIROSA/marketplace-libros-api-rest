@@ -5,6 +5,7 @@ const jwt = require("jsonwebtoken");
 const app = express();
 const bodyParser = require("body-parser");
 const logger = require("morgan");
+const { swaggerDocs } = require("./swagger/swagger");
 
 //consultas_
 const {
@@ -33,7 +34,7 @@ const port = process.env.PORT || 3002;
 /**
  *
  * MIDDLEWARE
- * 
+ *
  */
 
 app.use(express.json({ limit: "50mb" }));
@@ -42,6 +43,7 @@ app.use("/uploads", express.static("uploads"));
 app.use(bodyParser.json({ limit: "50mb" }));
 app.use(bodyParser.urlencoded({ extended: true, limit: "50mb" }));
 app.use(logger("dev"));
+swaggerDocs(app, port);
 
 /**
  *
@@ -108,6 +110,53 @@ app.delete("/admin/:id", async (req, res) => {
   }
 });
 
+
+/**
+ * @openapi
+ * /admin/{id}:
+ *   put:
+ *     tags:
+ *       - actualizar libro
+ *     summary: "Modificar el precio de un libro"
+ *     description: "Modifica el precio de un libro según su ID."
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *       - in: query
+ *         name: producto_nombre
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: producto_precio
+ *         schema:
+ *           type: number
+ *     responses:
+ *       '200':
+ *         description: "Precio modificado con éxito"
+ *         content:
+ *           application/json:
+ *             example:
+ *               success: true
+ *               message: "Precio modificado con éxito"
+ *       '400':
+ *         description: "Parámetro 'precio' inválido"
+ *         content:
+ *           application/json:
+ *             example:
+ *               error: "El parámetro 'precio' es inválido"
+ *       '500':
+ *         description: "Error interno del servidor"
+ *         content:
+ *           application/json:
+ *             example:
+ *               error: "Error interno del servidor"
+ */
+
+
+
 app.put("/admin/:id", async (req, res) => {
   try {
     const { id } = req.params;
@@ -131,10 +180,41 @@ app.put("/admin/:id", async (req, res) => {
 });
 
 /**
- * 
+ *
  * USUARIOS
  *
+
  */
+
+/**
+ * @openapi
+ * /usuarios:
+ *   get:
+ *     tags:
+ *       - usuarios
+ *     summary: "Obtener información del usuario"
+ *     description: "Obtiene la información del usuario autenticado"
+ *     security:
+ *       - BearerAuth: []
+ *     responses:
+ *       '200':
+ *         description: "Información del usuario obtenida con éxito"
+ *         content:
+ *           application/json:
+ *             example:
+ *               usuario:
+ *                 email: "vale@email.com"
+ *                 nombre: "valentina"
+ *       '401':
+ *         description: "Sin autorización o token vacío"
+ *         content:
+ *           application/json:
+ *             example:
+ *               error: "Sin autorización o token vacío"
+ */
+
+
+
 
 app.get("/usuarios", async (req, res) => {
   const token = req.headers.authorization;
@@ -196,7 +276,28 @@ app.post("/login", async (req, res) => {
   }
 });
 
-
+/**
+ * @openapi
+ * /productos:
+ *   get:
+ *     tags:
+ *       - productos
+ *     responses:
+ *       200:
+ *         description: OK
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: OK
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ */
 
 app.get("/productos", async (req, res) => {
   const queryStrings = req.query;
@@ -204,13 +305,11 @@ app.get("/productos", async (req, res) => {
   res.json(libros);
 });
 
-
 /**
  *
  * CARRITO DE COMPRAS
  *
  */
-
 
 app.post("/crear_pedido", async (req, res) => {
   try {
