@@ -14,6 +14,15 @@ const options = {
       title: "Castros Libros",
       version: "1.0.0",
     },
+    components: {
+      securitySchemes: {
+        BearerAuth: {
+          type: "http",
+          scheme: "bearer",
+          bearerFormat: "JWT",
+        },
+      },
+    },
   },
   apis: ["./src/index.js"],
 };
@@ -45,4 +54,3 @@ const swaggerDocs = (app, port) => {
 module.exports = {
   swaggerDocs,
 };
-

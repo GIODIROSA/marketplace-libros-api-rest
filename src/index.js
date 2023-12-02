@@ -63,34 +63,76 @@ const storage = multer.diskStorage({
 
 const uploadMiddleware = multer({ storage: storage });
 
-app.post("/admin", uploadMiddleware.single("imagenProducto"), async (req, res) => {
-  try {
-    const jsonDataString = req.body.data;
+/**
+ * @openapi
+ * /admin:
+ *   post:
+ *     tags:
+ *       - Crear Libro
+ *     summary: "Agregar un libro"
+ *     description: "Agrega un libro con información proporcionada."
+ *     requestBody:
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               imagenProducto:
+ *                 type: string
+ *                 format: binary
+ *               data:
+ *                 type: string
+ *             required:
+ *               - imagenProducto
+ *               - data
+ *     responses:
+ *       '200':
+ *         description: "Libro agregado con éxito"
+ *         content:
+ *           application/json:
+ *             example:
+ *               success: true
+ *               message: "Libro agregado con éxito"
+ *       '500':
+ *         description: "Error interno del servidor"
+ *         content:
+ *           application/json:
+ *             example:
+ *               error: "Error interno del servidor"
+ */
 
-    const jsonData = JSON.parse(jsonDataString);
+app.post(
+  "/admin",
+  uploadMiddleware.single("imagenProducto"),
+  async (req, res) => {
+    try {
+      const jsonDataString = req.body.data;
 
-    console.log("JSON", jsonData);
+      const jsonData = JSON.parse(jsonDataString);
 
-    const originalFileName = req.file.originalname;
+      console.log("JSON", jsonData);
 
-    const producto_imagen = `uploads\\${originalFileName}`;
+      const originalFileName = req.file.originalname;
 
-    await crearLibroData(jsonData, producto_imagen);
+      const producto_imagen = `uploads\\${originalFileName}`;
 
-    res.status(200).json({
-      success: true,
-      message: "Libro agregado con éxito",
-    });
-  } catch (error) {
-    console.error("Error al agregar libro:", error);
+      await crearLibroData(jsonData, producto_imagen);
 
-    res.status(500).json({
-      success: false,
-      error:
-        error instanceof Error ? error.message : "Error interno del servidor",
-    });
+      res.status(200).json({
+        success: true,
+        message: "Libro agregado con éxito",
+      });
+    } catch (error) {
+      console.error("Error al agregar libro:", error);
+
+      res.status(500).json({
+        success: false,
+        error:
+          error instanceof Error ? error.message : "Error interno del servidor",
+      });
+    }
   }
-});
+);
 
 /**
  * @openapi
@@ -154,7 +196,7 @@ app.delete("/admin/:id", async (req, res) => {
  * /admin/{id}:
  *   put:
  *     tags:
- *       - actualizar libro
+ *       - Update libro
  *     summary: "Modificar el precio de un libro"
  *     description: "Modifica el precio de un libro según su ID."
  *     parameters:
@@ -314,7 +356,7 @@ app.post("/login", async (req, res) => {
  * /productos:
  *   get:
  *     tags:
- *       - productos
+ *       - Read libros
  *     responses:
  *       200:
  *         description: OK
