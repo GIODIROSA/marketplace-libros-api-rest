@@ -425,3 +425,5 @@ app.get("*", (req, res) => {
 app.listen(port, () => {
   console.log(`SERVIDOR ENCENDIDO EN EL PORT: ${port}`);
 });
+
+module.exports = app;
