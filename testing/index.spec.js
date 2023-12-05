@@ -11,7 +11,7 @@ describe("test Productos", () => {
   });
 
   it("Debería eliminar el libro con éxito", async () => {
-    const response = await request(server).delete("/admin/30");
+    const response = await request(server).delete("/admin/34");
 
     expect(response.status).toBe(200);
     expect(response.body).toEqual({
